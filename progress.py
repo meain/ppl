@@ -30,14 +30,6 @@ def progress(count, total, task=''):
         times = time.time()
         print(bcolors.FAIL + '• ' + task + bcolors.ENDC)
 
-    percent_color = bcolors.FAIL
-    if percents > 80:
-        percent_color = bcolors.OKGREEN
-    elif percents > 55:
-        percent_color = bcolors.OKBLUE
-    elif percents > 30:
-        percent_color = bcolors.WARNING
-
     if count == total - 1:
         time_taken = time.time() - times
         sys.stdout.write(ERASE_LINE)
