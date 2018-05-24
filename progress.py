@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import random
@@ -19,7 +20,8 @@ times = time.time()
 
 def progress(count, total, task=''):
     global times
-    bar_len = 60
+    rows, columns = [int(i) for i in os.popen('stty size', 'r').read().split()]
+    bar_len = columns - 10
     CURSOR_UP_ONE = '\x1b[1A'
     ERASE_LINE = '\x1b[2K'
     filled_len = int(round(bar_len * count / float(total)))
@@ -38,20 +40,21 @@ def progress(count, total, task=''):
         print(bcolors.OKGREEN + '✔ ' + task + bcolors.ENDC + ' took ' +
               str(int(time_taken)) + 's')
     else:
-        bar = '─' * (filled_len - 1) + '•' + '⋯' * (bar_len - filled_len)
-        sys.stdout.write('%s %s%s%s\r' % (bar, percents, '%',
-                                            bcolors.ENDC))
+        bar = ' ' * 2 + '─' * (filled_len - 1) + '•' + '⋯' * (
+            bar_len - filled_len)
+        sys.stdout.write('%s %s%s%s\r' % (bar, percents, '%', bcolors.ENDC))
         sys.stdout.flush()
 
 
 total = 120
-i = 0
-epc = 1
-while epc < 11:
+tasks = [
+    'Make paintball', 'Find dragons', 'Code in python', 'Take out the trash',
+    'Fill up water bottles for trip'
+]
+for task in tasks:
+    i = 0
     while i < total:
-        progress(i, total, task='Epoch ' + str(epc))
+        progress(i, total, task=task)
         sleep_time = [.05, .04, .03, .02, .01][random.randint(0, 4)]
         time.sleep(sleep_time)  # emulating long-playing job
         i += 1
-    i = 0
-    epc += 1
