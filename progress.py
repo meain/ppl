@@ -15,11 +15,7 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-times = time.time()
-
-
 def pb(iterable, task=''):
-    global times
     rows, columns = [int(i) for i in os.popen('stty size', 'r').read().split()]
     bar_len = columns - 10
     CURSOR_UP_ONE = '\x1b[1A'
@@ -49,7 +45,8 @@ def pb(iterable, task=''):
         else:
             bar = ' ' * 2 + '─' * (filled_len - 1) + '•' + '⋯' * (
                 bar_len - filled_len)
-            sys.stdout.write('%s %s%s%s\r' % (bar, percents, '%', bcolors.ENDC))
+            sys.stdout.write(
+                '%s %s%s%s\r' % (bar, percents, '%', bcolors.ENDC))
             sys.stdout.flush()
 
 
@@ -62,12 +59,5 @@ tasks = [
 for task in tasks:
     i = 0
     for i in pb(range(total), task=task):
-        time.sleep(0.01)
-
-# for task in tasks:
-#     i = 0
-#     while i < total:
-#         progress(i, total, task=task)
-#         sleep_time = [.05, .04, .03, .02, .01][random.randint(0, 4)]
-#         time.sleep(sleep_time)  # emulating long-playing job
-#         i += 1
+        sleep_time = [.05, .04, .03, .02, .01][random.randint(0, 4)]
+        time.sleep(sleep_time)  # emulating long-playing task
