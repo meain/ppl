@@ -1,18 +1,21 @@
-# pb
+<h1 align="center">pb</h1>
 
-The progress bar library that stated with the idea of looking pretty.
-
-> By default the bar length is the full width of the terminal window
+<p align="center">
+<img src="https://i.imgur.com/qzbt6Z7.gif">
+<br>
+The progress bar library that stated with the idea of looking pretty
+</p>
 
 ## Installation
 
 For now just put the `progress.py` in your project.
+> By default the bar length is the full width of the terminal window
 
 ## How to use
 
 ### Simple usage
 
-```
+```python
 import time
 from progress import pb
 
@@ -22,7 +25,7 @@ for i in pb(range(100)):
 
 ### Show task name along with the progress bar
 
-```
+```python
 import time
 import random
 from progress import pb
@@ -40,7 +43,8 @@ for task in tasks:
 ```
 
 ### Custom bar length
-```
+
+```python
 import time
 from progress import pb
 
