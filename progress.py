@@ -24,6 +24,7 @@ def pb(iterable, task='Task', bar_len=0):
 
     count = 0
     total = len(iterable)
+    times = time.time()
     for obj in iterable:
         yield obj
         count += 1
@@ -32,7 +33,6 @@ def pb(iterable, task='Task', bar_len=0):
         percents = round(100.0 * count / float(total), 1)
 
         if count == 1:
-            times = time.time()
             sys.stdout.write(ERASE_LINE)
             print(bcolors.RED + '• ' + task + bcolors.ENDC)
 
