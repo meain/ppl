@@ -18,7 +18,7 @@ class bcolors:
 def pb(iterable, task='Task', bar_len=0):
     rows, columns = [int(i) for i in os.popen('stty size', 'r').read().split()]
     if bar_len == 0:
-        bar_len = columns - 11
+        bar_len = columns - 13
     CURSOR_UP_ONE = '\x1b[1A'
     ERASE_LINE = '\x1b[2K'
 
@@ -47,6 +47,7 @@ def pb(iterable, task='Task', bar_len=0):
         else:
             bar = ' ' * 2 + '─' * (filled_len - 1) + '•' + '⋯' * (
                 bar_len - filled_len)
+            sys.stdout.write(ERASE_LINE)
             sys.stdout.write(
                 '%s  %.2f%s%s\r' % (bar, percents, '%', bcolors.ENDC))
             sys.stdout.flush()
