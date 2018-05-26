@@ -8,7 +8,9 @@ The progress bar library that started with the idea of looking pretty
 
 ## Installation
 
-For now just put the `progress.py` in your project.
+```
+pip3 install mpb
+```
 > By default the bar length is the full width of the terminal window
 
 ## How to use
@@ -17,7 +19,7 @@ For now just put the `progress.py` in your project.
 
 ```python
 import time
-from progress import pb
+from mpb import pb
 
 for i in pb(range(100)):
     time.sleep(0.1)
@@ -28,7 +30,7 @@ for i in pb(range(100)):
 ```python
 import time
 import random
-from progress import pb
+from mpb import pb
 
 total = 120
 tasks = [
@@ -46,7 +48,7 @@ for task in tasks:
 
 ```python
 import time
-from progress import pb
+from mpb import pb
 
 for i in pb(range(100), bar_len=20):
     time.sleep(0.1)

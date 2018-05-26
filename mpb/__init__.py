@@ -1,1 +1,2 @@
-from mpb import pb
+from .mpb import *
+name = "mpb"

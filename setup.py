@@ -1,13 +1,15 @@
-from distutils.core import setup
+import setuptools
 
-setup(
-    name='mpb',
-    version='0.1',
-    packages=['mpb',],
-    license='MIT',
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name="mpb",
+    version="0.0.3",
     author = 'Abin Simon',
     author_email = 'abinsimon10@gmail.com',
-    url = 'https://github.com/meain/pb', # use the URL to the github repo
-    download_url = 'https://github.com/meain/pb/archive/0.1.tar.gz', # I'll explain this in a second
-    keywords = ['progressbar', 'spinner', 'loader'], # arbitrary keywords
+    description="A prettier progressbar library",
+    url="https://github.com/meain/mpb",
+    packages=setuptools.find_packages(),
+    keywords = ['progressbar', 'spinner', 'loader'],
 )
