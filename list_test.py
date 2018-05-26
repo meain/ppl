@@ -4,8 +4,8 @@ from progress import pb
 
 total = 120
 tasks = [
-    'Make paintball', 'Find dragons', 'Code in python',
-    'Take out the trash', 'Fill up water bottles for trip'
+    'Making paintball', 'Finding dragons', 'Coding in python',
+    'Taking out the trash', 'Filling up water bottles for trip'
 ]
 for task in tasks:
     i = 0
