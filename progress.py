@@ -96,16 +96,3 @@ def pb(iterable, task='Task', bar_len=0):
             yield obj
             count += 1
             _draw_progress_bar(task, total, count, start_time, bar_len)
-
-
-if __name__ == '__main__':
-    total = 120
-    tasks = [
-        'Make paintball', 'Find dragons', 'Code in python',
-        'Take out the trash', 'Fill up water bottles for trip'
-    ]
-    for task in tasks:
-        i = 0
-        for i in pb(range(total), task=task):
-            sleep_time = [.05, .04, .03, .02, .01][random.randint(0, 4)]
-            time.sleep(sleep_time)  # emulating long-playing task
