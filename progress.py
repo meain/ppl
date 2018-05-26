@@ -1,7 +1,6 @@
 import os
 import sys
 import time
-import random
 import types
 
 
@@ -27,18 +26,26 @@ def pb(iterable, task='Task', bar_len=0):
     start_time = time.time()
     if is_generator:
         print('')
+        spinner_icons = ['◐', '◓', '◑', '◒']
         for obj in iterable:
             count += 1
             time_taken = time.time() - start_time
+            avg_time = time_taken / count
+            icon = spinner_icons[int(((time_taken * 10) % 4))]
             sys.stdout.write(CURSOR_UP_ONE)
             sys.stdout.write(ERASE_LINE)
-            print('%s= %s%s' %
-                  (bcolors.GREEN, task, bcolors.ENDC))
+            print('%s%s %s%s' % (bcolors.RED, icon, task, bcolors.ENDC))
             sys.stdout.write(ERASE_LINE)
-            sys.stdout.write('%s  item: %s%s time: %.2f%s\r' %
-                  (bcolors.YELLOW, count, bcolors.BLUE, time_taken, bcolors.ENDC))
+            sys.stdout.write('%s  avg: %.2fs%s  time: %.2fs  %siter: %d%s\r' %
+                             (bcolors.PINK, avg_time, bcolors.BLUE, time_taken,
+                              bcolors.YELLOW, count, bcolors.ENDC))
             sys.stdout.write(ERASE_LINE)
             yield obj
+        total_time = time.time() - start_time
+        sys.stdout.write(CURSOR_UP_ONE)
+        sys.stdout.write(ERASE_LINE)
+        print('%s%s %s%s  took: %.2fs' % (bcolors.GREEN, '✔', task,
+                                          bcolors.ENDC, total_time))
     else:
         total = len(iterable)
         for obj in iterable:
@@ -59,8 +66,8 @@ def pb(iterable, task='Task', bar_len=0):
             if count == total - 1:
                 time_taken = time.time() - start_time
                 sys.stdout.write(ERASE_LINE)
-                print(bcolors.GREEN + '✔ ' + task + bcolors.ENDC + '  took ' +
-                      str(int(time_taken)) + 's')
+                print('%s✔ %s%s  took: %.2fs\r' % (bcolors.GREEN, task,
+                                                   bcolors.ENDC, time_taken))
             if count < total - 1:
                 bar = ' ' * 2 + '─' * (filled_len - 1) + '•' + '⋯' * (
                     bar_len - filled_len)
@@ -71,8 +78,8 @@ def pb(iterable, task='Task', bar_len=0):
 
             if count < total - 1:
                 print('    %s avg: %.2fs  %sleft: %.2fs  %scount: %.2fiter/s%s'
-                      % (bcolors.BLUE, avg_time, bcolors.YELLOW, time_left,
-                         bcolors.PINK, count_per_sec, bcolors.ENDC))
+                      % (bcolors.PINK, avg_time, bcolors.BLUE, time_left,
+                         bcolors.YELLOW, count_per_sec, bcolors.ENDC))
                 sys.stdout.write(CURSOR_UP_ONE)
                 sys.stdout.write(CURSOR_UP_ONE)
                 sys.stdout.write(CURSOR_UP_ONE)
