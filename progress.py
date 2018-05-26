@@ -33,15 +33,16 @@ def pb(iterable, task='Task', bar_len=0):
         percents = round(100.0 * count / float(total), 1)
 
         avg_time = (time.time() - times) / count
+        time_left = (total-count)*avg_time
 
-        print('%s• %s%s avg: %.2f' % (bcolors.RED, task, bcolors.ENDC, avg_time))
+        print('%s• %s%s  avg: %.2fs  left: %.2fs' % (bcolors.RED, task, bcolors.ENDC, avg_time, time_left))
 
         if count == total - 1:
             time_taken = time.time() - times
             sys.stdout.write(ERASE_LINE)
             sys.stdout.write(CURSOR_UP_ONE)
             sys.stdout.write(ERASE_LINE)
-            print(bcolors.GREEN + '✔ ' + task + bcolors.ENDC + ' took ' +
+            print(bcolors.GREEN + '✔ ' + task + bcolors.ENDC + '  took ' +
                   str(int(time_taken)) + 's')
         else:
             bar = ' ' * 2 + '─' * (filled_len - 1) + '•' + '⋯' * (
