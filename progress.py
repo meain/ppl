@@ -73,7 +73,42 @@ def _draw_spinner(task, count, start_time, final=False):
                                           bcolors.ENDC, total_time))
 
 
-def pb(iterable, task='Task', bar_len=0):
+def _draw_mini_progress_bar(task, total, count, start_time):
+    CURSOR_UP_ONE = '\x1b[1A'
+    ERASE_LINE = '\x1b[2K'
+
+    percents = round(100.0 * count / float(total), 1)
+
+    spinner_icons = ['◐', '◓', '◑', '◒']
+    time_taken = time.time() - start_time
+    icon = spinner_icons[int(((time_taken * 10) % 4))]
+
+    if count == total - 1:
+        time_taken = time.time() - start_time
+        sys.stdout.write(ERASE_LINE)
+        print('%s✔ %s%s  took: %.2fs\r' % (bcolors.GREEN, task, bcolors.ENDC,
+                                           time_taken))
+    if count < total - 1:
+        sys.stdout.write(ERASE_LINE)
+        print('%s%s %s%s %.2f%s' % (bcolors.RED,icon, task, bcolors.ENDC, percents, '%'))
+        sys.stdout.write(CURSOR_UP_ONE)
+
+def _draw_mini_spinner(task, count, start_time, final=False):
+    CURSOR_UP_ONE = '\x1b[1A'
+    ERASE_LINE = '\x1b[2K'
+    spinner_icons = ['◐', '◓', '◑', '◒']
+    time_taken = time.time() - start_time
+    icon = spinner_icons[int(((time_taken * 10) % 4))]
+    sys.stdout.write(ERASE_LINE)
+    print('%s%s %s%s iter: %d' % (bcolors.RED, icon, task, bcolors.ENDC, count))
+    sys.stdout.write(CURSOR_UP_ONE)
+    if final:
+        total_time = time.time() - start_time
+        sys.stdout.write(ERASE_LINE)
+        print('%s%s %s%s  took: %.2fs' % (bcolors.GREEN, '✔', task,
+                                          bcolors.ENDC, total_time))
+
+def pb(iterable, task='Task', bar_len=0, mini=False):
     columns = int(os.popen('stty size', 'r').read().split()[1])
     if bar_len == 0:
         bar_len = columns - 13
@@ -81,14 +116,27 @@ def pb(iterable, task='Task', bar_len=0):
     count = 0
     start_time = time.time()
     if is_generator:
-        for obj in iterable:
-            yield obj
-            count += 1
-            _draw_spinner(task, count, start_time)
-        _draw_spinner(task, count, start_time, final=True)
+        if not mini:  # this split I guess helps with perf when by removing check on each iter
+            for obj in iterable:
+                yield obj
+                count += 1
+                _draw_spinner(task, count, start_time)
+            _draw_spinner(task, count, start_time, final=True)
+        else:
+            for obj in iterable:
+                yield obj
+                count += 1
+                _draw_mini_spinner(task, count, start_time)
+            _draw_mini_spinner(task, count, start_time, final=True)
     else:
         total = len(iterable)
-        for obj in iterable:
-            yield obj
-            count += 1
-            _draw_progress_bar(task, total, count, start_time, bar_len)
+        if not mini:
+            for obj in iterable:
+                yield obj
+                count += 1
+                _draw_progress_bar(task, total, count, start_time, bar_len)
+        else:
+            for obj in iterable:
+                yield obj
+                count += 1
+                _draw_mini_progress_bar(task, total, count, start_time)
