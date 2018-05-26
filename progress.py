@@ -33,26 +33,33 @@ def pb(iterable, task='Task', bar_len=0):
         percents = round(100.0 * count / float(total), 1)
 
         avg_time = (time.time() - times) / count
-        time_left = (total-count)*avg_time
+        time_left = (total - count) * avg_time
+        count_per_sec = 1 / avg_time
 
-        print('%s• %s%s  avg: %.2fs  left: %.2fs' % (bcolors.RED, task, bcolors.ENDC, avg_time, time_left))
+        if count < total - 1:
+            sys.stdout.write(ERASE_LINE)
+            print('%s• %s%s' % (bcolors.RED, task, bcolors.ENDC))
 
         if count == total - 1:
             time_taken = time.time() - times
             sys.stdout.write(ERASE_LINE)
-            sys.stdout.write(CURSOR_UP_ONE)
-            sys.stdout.write(ERASE_LINE)
             print(bcolors.GREEN + '✔ ' + task + bcolors.ENDC + '  took ' +
                   str(int(time_taken)) + 's')
-        else:
+        if count < total - 1:
             bar = ' ' * 2 + '─' * (filled_len - 1) + '•' + '⋯' * (
                 bar_len - filled_len)
             sys.stdout.write(ERASE_LINE)
             sys.stdout.write(
-                '%s  %.2f%s%s\r' % (bar, percents, '%', bcolors.ENDC))
+                '%s  %.2f%s%s\r\n' % (bar, percents, '%', bcolors.ENDC))
             sys.stdout.flush()
+
+        if count < total - 1:
+            print('    %s avg: %.2fs  %sleft: %.2fs  %scount: %.2fiter/s%s' %
+                  (bcolors.BLUE, avg_time, bcolors.YELLOW, time_left, bcolors.PINK, count_per_sec,
+                   bcolors.ENDC))
             sys.stdout.write(CURSOR_UP_ONE)
-            sys.stdout.write(ERASE_LINE)
+            sys.stdout.write(CURSOR_UP_ONE)
+            sys.stdout.write(CURSOR_UP_ONE)
 
 
 if __name__ == '__main__':
