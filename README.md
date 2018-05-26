@@ -3,7 +3,7 @@
 <p align="center">
 <img src="https://i.imgur.com/0Df1gWy.gif">
 <br>
-The progress bar library that stated with the idea of looking pretty
+The progress bar library that started with the idea of looking pretty
 </p>
 
 ## Installation
