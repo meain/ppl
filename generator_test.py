@@ -1,15 +1,19 @@
+import time
+from progress import pb
+
+
 def square(nums):
     for i in nums:
         yield (i * i)
 
 
-from progress import pb
-import time
+tasks = [
+    'Mapping points', 'Painting rainbow white', 'Planting seeds',
+    'Playing mario', 'Watching anime'
+]
+counts = [100, 400, 100, 200, 50]
+times = [.01, .01, .03, .02, .05]
 
-squares = square(range(150))
-for i in pb(squares, task='Mapping Points'):
-    time.sleep(.03)
-
-squares = square(range(1000))
-for i in pb(squares, task='Painting rainbow white'):
-    time.sleep(.01)
+for x in zip(tasks,counts, times):
+    for i in pb(square(range(x[1])), task=x[0]):
+        time.sleep(x[2])
