@@ -32,9 +32,9 @@ def pb(iterable, task='Task', bar_len=0):
 
         percents = round(100.0 * count / float(total), 1)
 
-        if count == 1:
-            sys.stdout.write(ERASE_LINE)
-            print(bcolors.RED + '• ' + task + bcolors.ENDC)
+        avg_time = (time.time() - times) / count
+
+        print('%s• %s%s avg: %.2f' % (bcolors.RED, task, bcolors.ENDC, avg_time))
 
         if count == total - 1:
             time_taken = time.time() - times
@@ -47,15 +47,17 @@ def pb(iterable, task='Task', bar_len=0):
             bar = ' ' * 2 + '─' * (filled_len - 1) + '•' + '⋯' * (
                 bar_len - filled_len)
             sys.stdout.write(
-                '%s  %s%s%s\r' % (bar, percents, '%', bcolors.ENDC))
+                '%s  %.2f%s%s\r' % (bar, percents, '%', bcolors.ENDC))
             sys.stdout.flush()
+            sys.stdout.write(CURSOR_UP_ONE)
+            sys.stdout.write(ERASE_LINE)
 
 
 if __name__ == '__main__':
     total = 120
     tasks = [
-        'Make paintball', 'Find dragons', 'Code in python', 'Take out the trash',
-        'Fill up water bottles for trip'
+        'Make paintball', 'Find dragons', 'Code in python',
+        'Take out the trash', 'Fill up water bottles for trip'
     ]
     for task in tasks:
         i = 0
