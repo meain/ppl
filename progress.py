@@ -24,7 +24,7 @@ def pb(iterable, task='Task', bar_len=0):
 
     count = 0
     total = len(iterable)
-    times = time.time()
+    start_time = time.time()
     for obj in iterable:
         yield obj
         count += 1
@@ -32,7 +32,7 @@ def pb(iterable, task='Task', bar_len=0):
 
         percents = round(100.0 * count / float(total), 1)
 
-        avg_time = (time.time() - times) / count
+        avg_time = (time.time() - start_time) / count
         time_left = (total - count) * avg_time
         count_per_sec = 1 / avg_time
 
@@ -41,7 +41,7 @@ def pb(iterable, task='Task', bar_len=0):
             print('%s• %s%s' % (bcolors.RED, task, bcolors.ENDC))
 
         if count == total - 1:
-            time_taken = time.time() - times
+            time_taken = time.time() - start_time
             sys.stdout.write(ERASE_LINE)
             print(bcolors.GREEN + '✔ ' + task + bcolors.ENDC + '  took ' +
                   str(int(time_taken)) + 's')
