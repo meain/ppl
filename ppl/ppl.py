@@ -98,13 +98,12 @@ def _draw_mini_progress_bar(task, total, count, start_time):
     if count == total - 1:
         time_taken = time.time() - start_time
         sys.stdout.write(ERASE_LINE)
-        print('%s✔ %s%s  took: %.2fs\r' % (bcolors.GREEN, task, bcolors.ENDC,
+        sys.stdout.write('%s✔ %s%s  took: %.2fs\r\n' % (bcolors.GREEN, task, bcolors.ENDC,
                                            time_taken))
     if count < total - 1:
         sys.stdout.write(ERASE_LINE)
-        print('%s%s %s%s %.2f%s' % (bcolors.RED, icon, task, bcolors.ENDC,
+        sys.stdout.write('%s%s %s%s %.2f%s\r' % (bcolors.RED, icon, task, bcolors.ENDC,
                                     percents, '%'))
-        sys.stdout.write(CURSOR_UP_ONE)
 
 
 def _draw_mini_spinner(task, count, start_time, final=False):
@@ -114,13 +113,12 @@ def _draw_mini_spinner(task, count, start_time, final=False):
     time_taken = time.time() - start_time
     icon = spinner_icons[int(((time_taken * 10) % 4))]
     sys.stdout.write(ERASE_LINE)
-    print(
-        '%s%s %s%s iter: %d' % (bcolors.RED, icon, task, bcolors.ENDC, count))
-    sys.stdout.write(CURSOR_UP_ONE)
+    sys.stdout.write(
+        '%s%s %s%s iter: %d\r' % (bcolors.RED, icon, task, bcolors.ENDC, count))
     if final:
         total_time = time.time() - start_time
         sys.stdout.write(ERASE_LINE)
-        print('%s%s %s%s  took: %.2fs' % (bcolors.GREEN, '✔', task,
+        sys.stdout.write('%s%s %s%s  took: %.2fs\r\n' % (bcolors.GREEN, '✔', task,
                                           bcolors.ENDC, total_time))
 
 
