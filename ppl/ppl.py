@@ -40,15 +40,19 @@ def _draw_progress_bar(task, total, count, start_time, bar_len):
         sys.stdout.write(ERASE_LINE)
         print('%s%s %s%s' % (bcolors.RED, icon, task, bcolors.ENDC))
 
-        bar = ' ' * 2 + '─' * (filled_len - 1) + '•' + '⋯' * (
-            bar_len - filled_len)
+        # end options: ⋛ ≒
+        # bar options: ■ ─
+        # extention options: ' ' ⋯
+
+        bar = '  ≒ ' + '─' * (filled_len - 1) + '─' + ' ' * (
+            bar_len - filled_len) + ' ≒'
         sys.stdout.write(ERASE_LINE)
         sys.stdout.write(
             '%s  %.2f%s%s\r\n' % (bar, percents, '%', bcolors.ENDC))
         sys.stdout.flush()
 
         print(
-            ' %s avg: %.2fs  %sleft: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s'
+            '  %savg: %.2fs  %sleft: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s'
             % (bcolors.PINK, avg_time, bcolors.BLUE, time_left, bcolors.YELLOW,
                count, bcolors.GREEN, count_per_sec, bcolors.ENDC))
         sys.stdout.write(CURSOR_UP_ONE)
@@ -68,7 +72,7 @@ def _draw_spinner(task, count, start_time, final=False):
     print('%s%s %s%s' % (bcolors.RED, icon, task, bcolors.ENDC))
     sys.stdout.write(ERASE_LINE)
     sys.stdout.write(
-        '%s  avg: %.2fs%s  time: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s\r' %
+        '  %savg: %.2fs%s  time: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s\r' %
         (bcolors.PINK, avg_time, bcolors.BLUE, time_taken, bcolors.YELLOW,
          count, bcolors.GREEN, count_per_sec, bcolors.ENDC))
     sys.stdout.write(ERASE_LINE)
@@ -142,6 +146,8 @@ def pb(iterable, task='Task', bar_len=0, mini=False):
             columns = int(os.popen('stty size', 'r').read().split()[1])
             if bar_len == 0:
                 bar_len = columns - 13
+                if bar_len > 60:
+                    bar_len = 60
             for obj in iterable:
                 yield obj
                 count += 1
