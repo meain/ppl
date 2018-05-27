@@ -45,8 +45,8 @@ def _draw_progress_bar(task, total, count, start_time, bar_len):
         # pointer options: ╼ ◎ ● ○
         # extention options: ' ' ⋯
 
-        bar = '  ≒ ' + '─' * (filled_len - 1) + '─' + ' ' * (
-            bar_len - filled_len) + ' ≒'
+        bar = '  ' + '─' * (filled_len - 1) + '─' + ' ' * (
+            bar_len - filled_len) + ' ⋛'
         sys.stdout.write(ERASE_LINE)
         sys.stdout.write(
             '%s  %.2f%s%s\r\n' % (bar, percents, '%', bcolors.ENDC))
@@ -144,7 +144,10 @@ def pb(iterable, task='Task', bar_len=0, mini=False):
     else:
         total = len(iterable)
         if not mini:
-            columns = int(os.popen('stty size', 'r').read().split()[1])
+            try:
+                columns = int(os.popen('stty size', 'r').read().split()[1])
+            except:
+                columns = 100
             if bar_len == 0:
                 bar_len = columns - 13
                 if bar_len > 60:
