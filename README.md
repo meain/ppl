@@ -2,17 +2,18 @@
 
 <p align="center">
 <img src="https://i.imgur.com/UGgcdf1.gif">
-<br>
+</p>
+<h4 align="center">PRETTY PROGRESSBAR LIBRARY</h4>
+<p align="center">
 The progress bar library that started with the idea of looking pretty
 </p>
 
 ## Installation
 
+Only works with `python3`.
 ```
 pip3 install ppl
 ```
-> By default the bar length is the full width of the terminal window
-
 ## How to use
 
 ### Simple usage
@@ -46,6 +47,7 @@ for task in tasks:
 
 ### Custom bar length
 
+> By default the bar length is the full width of the terminal window
 ```python
 import time
 from ppl import pb
