@@ -4,8 +4,8 @@ from ppl import pb
 
 total = 120
 tasks = [
-    'Making paintball', 'Finding dragons', 'Coding in python',
-    'Taking out the trash', 'Filling up water bottles for trip'
+    'Making paintball', 'Finding dragons', 'Taking out the trash',
+    'Filling up water bottles for trip'
 ]
 for task in tasks:
     i = 0

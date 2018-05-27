@@ -8,12 +8,12 @@ def square(nums):
 
 
 tasks = [
-    'Mapping points', 'Painting rainbow white', 'Planting seeds',
-    'Playing mario', 'Watching anime'
+    'Mapping points', 'Painting rainbow white', 'Playing mario',
+    'Watching anime'
 ]
-counts = [100, 400, 100, 200, 50]
-times = [.01, .01, .03, .02, .05]
+counts = [100, 400, 100, 50]
+times = [.01, .01, .03, .05]
 
-for x in zip(tasks,counts, times):
+for x in zip(tasks, counts, times):
     for i in pb(square(range(x[1])), task=x[0]):
         time.sleep(x[2])
