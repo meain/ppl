@@ -42,6 +42,7 @@ def _draw_progress_bar(task, total, count, start_time, bar_len):
 
         # end options: ⋛ ≒
         # bar options: ■ ─
+        # pointer options: ╼ ◎ ● ○
         # extention options: ' ' ⋯
 
         bar = '  ≒ ' + '─' * (filled_len - 1) + '─' + ' ' * (
