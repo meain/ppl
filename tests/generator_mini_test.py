@@ -1,5 +1,5 @@
 import time
-from progress import pb
+from ppl import pb
 
 
 def square(nums):

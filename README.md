@@ -1,4 +1,4 @@
-<h1 align="center">pb</h1>
+<h1 align="center">ppl</h1>
 
 <p align="center">
 <img src="https://i.imgur.com/UGgcdf1.gif">
@@ -9,7 +9,7 @@ The progress bar library that started with the idea of looking pretty
 ## Installation
 
 ```
-pip3 install mpb
+pip3 install ppl
 ```
 > By default the bar length is the full width of the terminal window
 
@@ -19,7 +19,7 @@ pip3 install mpb
 
 ```python
 import time
-from mpb import pb
+from ppl import pb
 
 for i in pb(range(100)):
     time.sleep(0.1)
@@ -30,7 +30,7 @@ for i in pb(range(100)):
 ```python
 import time
 import random
-from mpb import pb
+from ppl import pb
 
 total = 120
 tasks = [
@@ -48,7 +48,7 @@ for task in tasks:
 
 ```python
 import time
-from mpb import pb
+from ppl import pb
 
 for i in pb(range(100), bar_len=20):
     time.sleep(0.1)

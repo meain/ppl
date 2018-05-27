@@ -1,6 +1,6 @@
 import time
 import random
-from progress import pb
+from ppl import pb
 
 total = 120
 tasks = [
