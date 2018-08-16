@@ -15,10 +15,11 @@ class bcolors:
     UNDERLINE = "\033[4m"
 
 
-def _draw_progress_bar(task, total, count, start_time, bar_len):
-    CURSOR_UP_ONE = "\x1b[1A"
-    ERASE_LINE = "\x1b[2K"
+CURSOR_UP_ONE = "\x1b[1A"
+ERASE_LINE = "\x1b[2K"
 
+
+def _draw_progress_bar(task, total, count, start_time, bar_len):
     filled_len = int(round(bar_len * count / float(total)))
     percents = round(100.0 * count / float(total), 1)
 
@@ -70,8 +71,6 @@ def _draw_progress_bar(task, total, count, start_time, bar_len):
 
 
 def _draw_spinner(task, count, start_time, final=False):
-    CURSOR_UP_ONE = "\x1b[1A"
-    ERASE_LINE = "\x1b[2K"
     spinner_icons = ["◐", "◓", "◑", "◒"]
     time_taken = time.time() - start_time
 
@@ -107,7 +106,6 @@ def _draw_spinner(task, count, start_time, final=False):
 
 
 def _draw_mini_progress_bar(task, total, count, start_time):
-    CURSOR_UP_ONE = "\x1b[1A"
     ERASE_LINE = "\x1b[2K"
 
     percents = round(100.0 * count / float(total), 1)
@@ -132,7 +130,6 @@ def _draw_mini_progress_bar(task, total, count, start_time):
 
 
 def _draw_mini_spinner(task, count, start_time, final=False):
-    CURSOR_UP_ONE = "\x1b[1A"
     ERASE_LINE = "\x1b[2K"
     spinner_icons = ["◐", "◓", "◑", "◒"]
     time_taken = time.time() - start_time
@@ -151,8 +148,6 @@ def _draw_mini_spinner(task, count, start_time, final=False):
 
 
 def _cleanup():
-    CURSOR_UP_ONE = "\x1b[1A"
-    ERASE_LINE = "\x1b[2K"
     sys.stdout.write(ERASE_LINE)
     sys.stdout.write("\n")
     sys.stdout.write(ERASE_LINE)
