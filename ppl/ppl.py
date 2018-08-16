@@ -26,17 +26,17 @@ def _draw_progress_bar(task, total, count, start_time, bar_len):
     time_taken = time.time() - start_time
     icon = spinner_icons[int(((time_taken * 10) % 4))]
 
-    avg_time = time_taken / count
-    time_left = (total - count) * avg_time
-    count_per_sec = 1 / avg_time
+    avg_time = (time_taken / count) if count != 0 else 0
+    time_left = ((total - count) * avg_time) if avg_time != 0 else 0
+    count_per_sec = (1 / avg_time) if avg_time != 0 else 0
 
-    if count == total - 1:
+    if count == total:
         time_taken = time.time() - start_time
         sys.stdout.write(ERASE_LINE)
         print(
             "%s✔ %s%s  took: %.2fs\r" % (bcolors.GREEN, task, bcolors.ENDC, time_taken)
         )
-    if count < total - 1:
+    if count < total:
         sys.stdout.write(ERASE_LINE)
         print("%s%s %s%s" % (bcolors.RED, icon, task, bcolors.ENDC))
 
@@ -74,8 +74,9 @@ def _draw_spinner(task, count, start_time, final=False):
     ERASE_LINE = "\x1b[2K"
     spinner_icons = ["◐", "◓", "◑", "◒"]
     time_taken = time.time() - start_time
-    avg_time = time_taken / count
-    count_per_sec = 1 / avg_time
+
+    avg_time = (time_taken / count) if count != 0 else 0
+    count_per_sec = (1 / avg_time) if avg_time != 0 else 0
     icon = spinner_icons[int(((time_taken * 10) % 4))]
     sys.stdout.write(ERASE_LINE)
     print("%s%s %s%s" % (bcolors.RED, icon, task, bcolors.ENDC))
@@ -115,14 +116,14 @@ def _draw_mini_progress_bar(task, total, count, start_time):
     time_taken = time.time() - start_time
     icon = spinner_icons[int(((time_taken * 10) % 4))]
 
-    if count == total - 1:
+    if count == total:
         time_taken = time.time() - start_time
         sys.stdout.write(ERASE_LINE)
         sys.stdout.write(
             "%s✔ %s%s  took: %.2fs\r\n"
             % (bcolors.GREEN, task, bcolors.ENDC, time_taken)
         )
-    if count < total - 1:
+    if count < total:
         sys.stdout.write(ERASE_LINE)
         sys.stdout.write(
             "%s%s %s%s %.2f%s\r"
@@ -168,15 +169,15 @@ def pb(iterable, task="Task", bar_len=0, mini=False):
     if is_generator:
         if not mini:
             for obj in iterable:
+                _draw_spinner(task, count, start_time)
                 yield obj
                 count += 1
-                _draw_spinner(task, count, start_time)
             _draw_spinner(task, count, start_time, final=True)
         else:
             for obj in iterable:
+                _draw_mini_spinner(task, count, start_time)
                 yield obj
                 count += 1
-                _draw_mini_spinner(task, count, start_time)
             _draw_mini_spinner(task, count, start_time, final=True)
         _cleanup()
     else:
@@ -191,12 +192,14 @@ def pb(iterable, task="Task", bar_len=0, mini=False):
                 if bar_len > 60:
                     bar_len = 60
             for obj in iterable:
+                _draw_progress_bar(task, total, count, start_time, bar_len)
                 yield obj
                 count += 1
-                _draw_progress_bar(task, total, count, start_time, bar_len)
+            _draw_progress_bar(task, total, count, start_time, bar_len)
         else:
             for obj in iterable:
-                yield obj
-                count += 1
                 _draw_mini_progress_bar(task, total, count, start_time)
+                count += 1
+                yield obj
+            _draw_mini_progress_bar(task, total, count, start_time)
         _cleanup()
