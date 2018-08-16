@@ -122,6 +122,17 @@ def _draw_mini_spinner(task, count, start_time, final=False):
                                           bcolors.ENDC, total_time))
 
 
+def _cleanup():
+    CURSOR_UP_ONE = '\x1b[1A'
+    ERASE_LINE = '\x1b[2K'
+    sys.stdout.write(ERASE_LINE)
+    sys.stdout.write('\n')
+    sys.stdout.write(ERASE_LINE)
+    sys.stdout.write('\n')
+    sys.stdout.write(ERASE_LINE)
+    sys.stdout.write(CURSOR_UP_ONE)
+    sys.stdout.write(CURSOR_UP_ONE)
+
 def pb(iterable, task='Task', bar_len=0, mini=False):
     is_generator = isinstance(iterable, types.GeneratorType)
     count = 0
@@ -139,6 +150,7 @@ def pb(iterable, task='Task', bar_len=0, mini=False):
                 count += 1
                 _draw_mini_spinner(task, count, start_time)
             _draw_mini_spinner(task, count, start_time, final=True)
+        _cleanup()
     else:
         total = len(iterable)
         if not mini:
@@ -159,3 +171,4 @@ def pb(iterable, task='Task', bar_len=0, mini=False):
                 yield obj
                 count += 1
                 _draw_mini_progress_bar(task, total, count, start_time)
+        _cleanup()
