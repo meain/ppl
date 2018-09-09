@@ -7,13 +7,16 @@ def square(nums):
         yield (i * i)
 
 
-tasks = [
-    'Mapping points', 'Painting rainbow white', 'Playing mario',
-    'Watching anime'
-]
+tasks = ["Mapping points", "Painting rainbow white"]
 counts = [100, 400, 100, 50]
 times = [.01, .01, .03, .05]
 
+print("With iter_name")
 for x in zip(tasks, counts, times):
     for i in pb(square(range(x[1])), task=x[0]):
+        time.sleep(x[2])
+
+print("\nWithout iter_name")
+for x in zip(tasks, counts, times):
+    for i in pb(square(range(x[1])), task=x[0], iter_name=None):
         time.sleep(x[2])

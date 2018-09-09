@@ -28,7 +28,7 @@ CHECK_CHAR = "✔"
 # extention options: ' ' ⋯
 
 
-def _draw_progress_bar(task, total, count, start_time, bar_len):
+def _draw_progress_bar(task, total, count, start_time, bar_len, iter_name):
     time_taken = time.time() - start_time
     filled_len = int(round(bar_len * count / float(total)))
     percents = round(100.0 * count / float(total), 1)
@@ -63,15 +63,16 @@ def _draw_progress_bar(task, total, count, start_time, bar_len):
         )
         sys.stdout.write("\r%s  %.2f%s%s\n" % (bar, percents, "%", bcolors.ENDC))
 
+        iter_string = "%s: %d  " % (iter_name, count) if iter_name is not None else ""
         sys.stdout.write(
-            "\r  %savg: %.2fs  %sleft: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s"
+            "\r  %savg: %.2fs  %sleft: %.2fs  %s%s%sspeed: %.2fiter/s%s"
             % (
                 bcolors.PINK,
                 avg_time,
                 bcolors.BLUE,
                 time_left,
                 bcolors.YELLOW,
-                count,
+                iter_string,
                 bcolors.GREEN,
                 count_per_sec,
                 bcolors.ENDC,
@@ -79,7 +80,7 @@ def _draw_progress_bar(task, total, count, start_time, bar_len):
         )
 
 
-def _draw_spinner(task, count, start_time, final=False):
+def _draw_spinner(task, count, start_time, iter_name, final=False):
     time_taken = time.time() - start_time
     avg_time = (time_taken / count) if count != 0 else 0
     count_per_sec = (1 / avg_time) if avg_time != 0 else 0
@@ -96,15 +97,16 @@ def _draw_spinner(task, count, start_time, final=False):
         )
     else:
         sys.stdout.write("\r%s%s %s%s\n" % (bcolors.RED, icon, task, bcolors.ENDC))
+        iter_string = "%s: %d  " % (iter_name, count) if iter_name is not None else ""
         sys.stdout.write(
-            "\r  %savg: %.2fs%s  time: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s"
+            "\r  %savg: %.2fs%s  time: %.2fs  %s%s%sspeed: %.2fiter/s%s"
             % (
                 bcolors.PINK,
                 avg_time,
                 bcolors.BLUE,
                 time_taken,
                 bcolors.YELLOW,
-                count,
+                iter_string,
                 bcolors.GREEN,
                 count_per_sec,
                 bcolors.ENDC,
@@ -112,7 +114,7 @@ def _draw_spinner(task, count, start_time, final=False):
         )
 
 
-def _draw_mini_progress_bar(task, total, count, start_time):
+def _draw_mini_progress_bar(task, total, count, start_time, iter_name):
     time_taken = time.time() - start_time
     percents = round(100.0 * count / float(total), 1)
     icon = spinner_icons[int(((time_taken * 10) % 4))]
@@ -132,7 +134,7 @@ def _draw_mini_progress_bar(task, total, count, start_time):
         )
 
 
-def _draw_mini_spinner(task, count, start_time, final=False):
+def _draw_mini_spinner(task, count, start_time, iter_name, final=False):
     time_taken = time.time() - start_time
     icon = spinner_icons[int(((time_taken * 10) % 4))]
 
@@ -143,25 +145,29 @@ def _draw_mini_spinner(task, count, start_time, final=False):
             % (bcolors.GREEN, CHECK_CHAR, task, bcolors.ENDC, time_taken)
         )
     else:
+        iter_string = "%s: %d " % (iter_name, count) if iter_name is not None else ""
         sys.stdout.write(
-            "\r%s%s %s%s iter: %d time: %.2fs" % (bcolors.RED, icon, task, bcolors.ENDC, count, time_taken)
+            "\r%s%s %s%s %stime: %.2fs"
+            % (bcolors.RED, icon, task, bcolors.ENDC, iter_string, time_taken)
         )
 
 
-def _call_renderer(is_generator, mini, task, count, start_time, total, bar_len, final):
+def _call_renderer(
+    is_generator, mini, task, count, start_time, total, bar_len, iter_name, final
+):
     if not is_generator or total is not None:
         if mini:
-            _draw_mini_progress_bar(task, total, count, start_time)
+            _draw_mini_progress_bar(task, total, count, start_time, iter_name)
         else:
-            _draw_progress_bar(task, total, count, start_time, bar_len)
+            _draw_progress_bar(task, total, count, start_time, bar_len, iter_name)
     else:
         if mini:
-            _draw_mini_spinner(task, count, start_time, final)
+            _draw_mini_spinner(task, count, start_time, iter_name, final)
         else:
-            _draw_spinner(task, count, start_time, final)
+            _draw_spinner(task, count, start_time, iter_name, final)
 
 
-def pb(iterable, task="Task", bar_len=None, mini=False, total=None):
+def pb(iterable, task="Task", bar_len=None, mini=False, total=None, iter_name="iter"):
     count = 0
     start_time = time.time()
     is_generator = isinstance(iterable, types.GeneratorType)
@@ -178,6 +184,18 @@ def pb(iterable, task="Task", bar_len=None, mini=False, total=None):
 
     for obj in iterable:
         yield obj
-        _call_renderer(is_generator, mini, task, count, start_time, total, bar_len, False)
+        _call_renderer(
+            is_generator,
+            mini,
+            task,
+            count,
+            start_time,
+            total,
+            bar_len,
+            iter_name,
+            False,
+        )
         count += 1
-    _call_renderer(is_generator, mini, task, count, start_time, total, bar_len, True)
+    _call_renderer(
+        is_generator, mini, task, count, start_time, total, bar_len, iter_name, True
+    )
