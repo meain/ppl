@@ -147,26 +147,26 @@ def _draw_mini_spinner(task, count, start_time, final=False):
 
 
 def _call_renderer(is_generator, mini, task, count, start_time, total, bar_len, final):
-    if is_generator:
-        if mini:
-            _draw_mini_spinner(task, count, start_time, final)
-        else:
-            _draw_spinner(task, count, start_time, final)
-    else:
+    if not is_generator or total is not None:
         if mini:
             _draw_mini_progress_bar(task, total, count, start_time)
         else:
             _draw_progress_bar(task, total, count, start_time, bar_len)
+    else:
+        if mini:
+            _draw_mini_spinner(task, count, start_time, final)
+        else:
+            _draw_spinner(task, count, start_time, final)
 
 
-def pb(iterable, task="Task", bar_len=None, mini=False):
+def pb(iterable, task="Task", bar_len=None, mini=False, total=None):
     count = 0
     start_time = time.time()
     is_generator = isinstance(iterable, types.GeneratorType)
 
-    total = None
-    if not is_generator:
-        total = len(iterable)
+    if not is_generator or total is not None:
+        if total is None:
+            total = len(iterable)
         if bar_len is None:
             try:
                 columns = int(os.popen("stty size", "r").read().split()[1])
