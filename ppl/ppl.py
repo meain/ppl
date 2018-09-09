@@ -38,7 +38,7 @@ def _draw_progress_bar(task, total, count, start_time, bar_len):
     time_left = ((total - count) * avg_time) if avg_time != 0 else 0
     count_per_sec = (1 / avg_time) if avg_time != 0 else 0
 
-    if (count != 0):
+    if count != 0:
         sys.stdout.write(ERASE_LINE)
         sys.stdout.write(CURSOR_UP_ONE)
         sys.stdout.write(ERASE_LINE)
@@ -85,7 +85,7 @@ def _draw_spinner(task, count, start_time, final=False):
     count_per_sec = (1 / avg_time) if avg_time != 0 else 0
     icon = spinner_icons[int(((time_taken * 10) % 4))]
 
-    if (count != 0):
+    if count != 0:
         sys.stdout.write(ERASE_LINE)
         sys.stdout.write(CURSOR_UP_ONE)
         sys.stdout.write(ERASE_LINE)
@@ -146,17 +146,7 @@ def _draw_mini_spinner(task, count, start_time, final=False):
         )
 
 
-def _cleanup():
-    sys.stdout.write(ERASE_LINE)
-    sys.stdout.write("\n")
-    sys.stdout.write(ERASE_LINE)
-    sys.stdout.write("\n")
-    sys.stdout.write(ERASE_LINE)
-    sys.stdout.write(CURSOR_UP_ONE)
-    sys.stdout.write(CURSOR_UP_ONE)
-
-
-def pb(iterable, task="Task", bar_len=0, mini=False):
+def pb(iterable, task="Task", bar_len=None, mini=False):
     is_generator = isinstance(iterable, types.GeneratorType)
     count = 0
     start_time = time.time()
@@ -173,18 +163,17 @@ def pb(iterable, task="Task", bar_len=0, mini=False):
                 yield obj
                 count += 1
             _draw_mini_spinner(task, count, start_time, final=True)
-        _cleanup()
     else:
         total = len(iterable)
         if not mini:
-            try:
-                columns = int(os.popen("stty size", "r").read().split()[1])
-            except Exception:
-                columns = 100
-            if bar_len == 0:
-                bar_len = columns - 13
-                if bar_len > 60:
-                    bar_len = 60
+
+            if bar_len is None:
+                try:
+                    columns = int(os.popen("stty size", "r").read().split()[1])
+                except Exception:
+                    columns = 100
+                bar_len = min(60, columns - 13)
+
             for obj in iterable:
                 _draw_progress_bar(task, total, count, start_time, bar_len)
                 yield obj
@@ -196,4 +185,3 @@ def pb(iterable, task="Task", bar_len=0, mini=False):
                 count += 1
                 yield obj
             _draw_mini_progress_bar(task, total, count, start_time)
-        _cleanup()
