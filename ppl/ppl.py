@@ -146,42 +146,36 @@ def _draw_mini_spinner(task, count, start_time, final=False):
         )
 
 
+def _call_renderer(is_generator, mini, task, count, start_time, total, bar_len, final):
+    if is_generator:
+        if mini:
+            _draw_mini_spinner(task, count, start_time, final)
+        else:
+            _draw_spinner(task, count, start_time, final)
+    else:
+        if mini:
+            _draw_mini_progress_bar(task, total, count, start_time)
+        else:
+            _draw_progress_bar(task, total, count, start_time, bar_len)
+
+
 def pb(iterable, task="Task", bar_len=None, mini=False):
-    is_generator = isinstance(iterable, types.GeneratorType)
     count = 0
     start_time = time.time()
-    if is_generator:
-        if not mini:
-            for obj in iterable:
-                _draw_spinner(task, count, start_time)
-                yield obj
-                count += 1
-            _draw_spinner(task, count, start_time, final=True)
-        else:
-            for obj in iterable:
-                _draw_mini_spinner(task, count, start_time)
-                yield obj
-                count += 1
-            _draw_mini_spinner(task, count, start_time, final=True)
-    else:
+    is_generator = isinstance(iterable, types.GeneratorType)
+
+    total = None
+    if not is_generator:
         total = len(iterable)
-        if not mini:
+        if bar_len is None:
+            try:
+                columns = int(os.popen("stty size", "r").read().split()[1])
+            except Exception:
+                columns = 100
+            bar_len = min(60, columns - 13)
 
-            if bar_len is None:
-                try:
-                    columns = int(os.popen("stty size", "r").read().split()[1])
-                except Exception:
-                    columns = 100
-                bar_len = min(60, columns - 13)
-
-            for obj in iterable:
-                _draw_progress_bar(task, total, count, start_time, bar_len)
-                yield obj
-                count += 1
-            _draw_progress_bar(task, total, count, start_time, bar_len)
-        else:
-            for obj in iterable:
-                _draw_mini_progress_bar(task, total, count, start_time)
-                count += 1
-                yield obj
-            _draw_mini_progress_bar(task, total, count, start_time)
+    for obj in iterable:
+        yield obj
+        _call_renderer(is_generator, mini, task, count, start_time, total, bar_len, False)
+        count += 1
+    _call_renderer(is_generator, mini, task, count, start_time, total, bar_len, True)
