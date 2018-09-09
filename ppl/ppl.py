@@ -17,42 +17,54 @@ class bcolors:
 
 CURSOR_UP_ONE = "\x1b[1A"
 ERASE_LINE = "\x1b[2K"
+spinner_icons = ["◐", "◓", "◑", "◒"]
+
+END_CHAR = "⋛"
+BAR_CHAR = "─"
+CHECK_CHAR = "✔"
+# end options: ⋛ ≒
+# bar options: ■ ─
+# pointer options: ╼ ◎ ● ○
+# extention options: ' ' ⋯
 
 
 def _draw_progress_bar(task, total, count, start_time, bar_len):
+    time_taken = time.time() - start_time
     filled_len = int(round(bar_len * count / float(total)))
     percents = round(100.0 * count / float(total), 1)
-
-    spinner_icons = ["◐", "◓", "◑", "◒"]
-    time_taken = time.time() - start_time
     icon = spinner_icons[int(((time_taken * 10) % 4))]
 
     avg_time = (time_taken / count) if count != 0 else 0
     time_left = ((total - count) * avg_time) if avg_time != 0 else 0
     count_per_sec = (1 / avg_time) if avg_time != 0 else 0
 
+    if (count != 0):
+        sys.stdout.write(ERASE_LINE)
+        sys.stdout.write(CURSOR_UP_ONE)
+        sys.stdout.write(ERASE_LINE)
+        sys.stdout.write(CURSOR_UP_ONE)
+        sys.stdout.write(ERASE_LINE)
+
     if count == total:
-        time_taken = time.time() - start_time
-        sys.stdout.write(ERASE_LINE)
-        print(
-            "%s✔ %s%s  took: %.2fs\r" % (bcolors.GREEN, task, bcolors.ENDC, time_taken)
+        sys.stdout.write(
+            "\r%s%s %s%s  took: %.2fs\n"
+            % (bcolors.GREEN, CHECK_CHAR, task, bcolors.ENDC, time_taken)
         )
-    if count < total:
-        sys.stdout.write(ERASE_LINE)
-        print("%s%s %s%s" % (bcolors.RED, icon, task, bcolors.ENDC))
+    else:
+        sys.stdout.write("\r%s%s %s%s\n" % (bcolors.RED, icon, task, bcolors.ENDC))
 
-        # end options: ⋛ ≒
-        # bar options: ■ ─
-        # pointer options: ╼ ◎ ● ○
-        # extention options: ' ' ⋯
+        bar = (
+            "  "
+            + BAR_CHAR * (filled_len - 1)
+            + BAR_CHAR
+            + " " * (bar_len - filled_len)
+            + " "
+            + END_CHAR
+        )
+        sys.stdout.write("\r%s  %.2f%s%s\n" % (bar, percents, "%", bcolors.ENDC))
 
-        bar = "  " + "─" * (filled_len - 1) + "─" + " " * (bar_len - filled_len) + " ⋛"
-        sys.stdout.write(ERASE_LINE)
-        sys.stdout.write("%s  %.2f%s%s\r\n" % (bar, percents, "%", bcolors.ENDC))
-        sys.stdout.flush()
-
-        print(
-            "  %savg: %.2fs  %sleft: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s"
+        sys.stdout.write(
+            "\r  %savg: %.2fs  %sleft: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s"
             % (
                 bcolors.PINK,
                 avg_time,
@@ -65,85 +77,72 @@ def _draw_progress_bar(task, total, count, start_time, bar_len):
                 bcolors.ENDC,
             )
         )
-        sys.stdout.write(CURSOR_UP_ONE)
-        sys.stdout.write(CURSOR_UP_ONE)
-        sys.stdout.write(CURSOR_UP_ONE)
 
 
 def _draw_spinner(task, count, start_time, final=False):
-    spinner_icons = ["◐", "◓", "◑", "◒"]
     time_taken = time.time() - start_time
-
     avg_time = (time_taken / count) if count != 0 else 0
     count_per_sec = (1 / avg_time) if avg_time != 0 else 0
     icon = spinner_icons[int(((time_taken * 10) % 4))]
-    sys.stdout.write(ERASE_LINE)
-    print("%s%s %s%s" % (bcolors.RED, icon, task, bcolors.ENDC))
-    sys.stdout.write(ERASE_LINE)
-    sys.stdout.write(
-        "  %savg: %.2fs%s  time: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s\r"
-        % (
-            bcolors.PINK,
-            avg_time,
-            bcolors.BLUE,
-            time_taken,
-            bcolors.YELLOW,
-            count,
-            bcolors.GREEN,
-            count_per_sec,
-            bcolors.ENDC,
-        )
-    )
-    sys.stdout.write(ERASE_LINE)
-    sys.stdout.write(CURSOR_UP_ONE)
-    if final:
-        total_time = time.time() - start_time
+
+    if (count != 0):
         sys.stdout.write(ERASE_LINE)
-        print(
-            "%s%s %s%s  took: %.2fs"
-            % (bcolors.GREEN, "✔", task, bcolors.ENDC, total_time)
+        sys.stdout.write(CURSOR_UP_ONE)
+        sys.stdout.write(ERASE_LINE)
+    if final:
+        sys.stdout.write(
+            "\r%s%s %s%s  took: %.2fs\n"
+            % (bcolors.GREEN, CHECK_CHAR, task, bcolors.ENDC, time_taken)
+        )
+    else:
+        sys.stdout.write("\r%s%s %s%s\n" % (bcolors.RED, icon, task, bcolors.ENDC))
+        sys.stdout.write(
+            "\r  %savg: %.2fs%s  time: %.2fs  %siter: %d  %sspeed: %.2fiter/s%s"
+            % (
+                bcolors.PINK,
+                avg_time,
+                bcolors.BLUE,
+                time_taken,
+                bcolors.YELLOW,
+                count,
+                bcolors.GREEN,
+                count_per_sec,
+                bcolors.ENDC,
+            )
         )
 
 
 def _draw_mini_progress_bar(task, total, count, start_time):
-    ERASE_LINE = "\x1b[2K"
-
-    percents = round(100.0 * count / float(total), 1)
-
-    spinner_icons = ["◐", "◓", "◑", "◒"]
     time_taken = time.time() - start_time
+    percents = round(100.0 * count / float(total), 1)
     icon = spinner_icons[int(((time_taken * 10) % 4))]
 
+    sys.stdout.write(ERASE_LINE)
     if count == total:
-        time_taken = time.time() - start_time
-        sys.stdout.write(ERASE_LINE)
         sys.stdout.write(
-            "%s✔ %s%s  took: %.2fs\r\n"
-            % (bcolors.GREEN, task, bcolors.ENDC, time_taken)
+            "\r%s%s %s%s  took: %.2fs\n"
+            % (bcolors.GREEN, CHECK_CHAR, task, bcolors.ENDC, time_taken)
         )
-    if count < total:
-        sys.stdout.write(ERASE_LINE)
+    else:
         sys.stdout.write(
-            "%s%s %s%s %.2f%s\r"
+            "\r%s%s %s%s %.2f%s"
             % (bcolors.RED, icon, task, bcolors.ENDC, percents, "%")
         )
 
 
 def _draw_mini_spinner(task, count, start_time, final=False):
-    ERASE_LINE = "\x1b[2K"
-    spinner_icons = ["◐", "◓", "◑", "◒"]
     time_taken = time.time() - start_time
     icon = spinner_icons[int(((time_taken * 10) % 4))]
+
     sys.stdout.write(ERASE_LINE)
-    sys.stdout.write(
-        "%s%s %s%s iter: %d\r" % (bcolors.RED, icon, task, bcolors.ENDC, count)
-    )
     if final:
-        total_time = time.time() - start_time
-        sys.stdout.write(ERASE_LINE)
         sys.stdout.write(
-            "%s%s %s%s  took: %.2fs\r\n"
-            % (bcolors.GREEN, "✔", task, bcolors.ENDC, total_time)
+            "\r%s%s %s%s  took: %.2fs\n"
+            % (bcolors.GREEN, CHECK_CHAR, task, bcolors.ENDC, time_taken)
+        )
+    else:
+        sys.stdout.write(
+            "\r%s%s %s%s iter: %d" % (bcolors.RED, icon, task, bcolors.ENDC, count)
         )
 
 
