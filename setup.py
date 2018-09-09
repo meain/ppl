@@ -16,7 +16,7 @@ cur_classifiers = [
 
 setuptools.setup(
     name="ppl",
-    version="0.2.0",
+    version="0.3.0",
     author='Abin Simon',
     author_email='abinsimon10@gmail.com',
     description="A pretty progressbar library",
